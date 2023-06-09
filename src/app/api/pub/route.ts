@@ -23,7 +23,9 @@ export async function POST(request: Request) {
   for (let index = 0; index < clients; index++) {
     const value = await kv.lindex('clients', index)
 
-    const subscription: PushSubscription = JSON.parse(value)
+    console.log(value);
+
+    const subscription: PushSubscription = value
 
     WebPush.sendNotification(subscription, JSON.stringify({
       content,
