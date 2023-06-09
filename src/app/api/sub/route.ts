@@ -1,12 +1,14 @@
 import WebPush from 'web-push'
 
+const currentVercelURL = process.env.VERCEL
+  ? `https://${process.env.VERCEL_URL}`
+  : process.env.VERCEL_URL
 
 WebPush.setVapidDetails(
-  process.env.VERCEL_URL ?? '',
+  currentVercelURL ?? '',
   process.env.PUBLIC_NOTIFICATION_KEY ?? '',
   process.env.PRIVATE_NOTIFICATION_KEY ?? ''
 )
-
 
 export async function GET() {
   return new Response(process.env.PUBLIC_NOTIFICATION_KEY ?? '')

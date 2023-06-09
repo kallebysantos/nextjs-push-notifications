@@ -4,8 +4,12 @@ export type PushNotificationPayload = {
   content: string
 }
 
+const currentVercelURL = process.env.VERCEL
+  ? `https://${process.env.VERCEL_URL}`
+  : process.env.VERCEL_URL
+
 WebPush.setVapidDetails(
-  process.env.VERCEL_URL ?? '',
+  currentVercelURL ?? '',
   process.env.PUBLIC_NOTIFICATION_KEY ?? '',
   process.env.PRIVATE_NOTIFICATION_KEY ?? ''
 )
