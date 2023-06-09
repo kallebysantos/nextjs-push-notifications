@@ -4,13 +4,11 @@ export type PushNotificationPayload = {
   content: string
 }
 
-// Should be stored as Env secrets
-const VAPIDKeys = {
-  publicKey: 'BPoHB2L2w5JRVL5ZCCKfdvqsN0l0htvXA6wrrLMOp0BG37tLBfQFxZ1iFCXJrCyYE6MMZzyqCSMgYxtGaITXgQU',
-  privateKey: 'ozzhzPBPy7QRjB9ti7_VbZSfoCucC3G5OVlKpR09QhM'
-}
-
-WebPush.setVapidDetails('http://localhost:3000', VAPIDKeys.publicKey, VAPIDKeys.privateKey)
+WebPush.setVapidDetails(
+  process.env.VERCEL_URL ?? '',
+  process.env.PUBLIC_NOTIFICATION_KEY ?? '',
+  process.env.PRIVATE_NOTIFICATION_KEY ?? ''
+)
 
 export async function POST(request: Request) {
   const { content }: PushNotificationPayload = await request.json();
@@ -22,8 +20,6 @@ export async function POST(request: Request) {
       auth: 'Q58wPM3aWO-mEZvta7wrNg'
     }
   }
-
-
 
   WebPush.sendNotification(subscription, JSON.stringify({
     content,

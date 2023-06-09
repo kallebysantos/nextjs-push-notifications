@@ -8,43 +8,46 @@ export type Notification = {
   timestamp: Date
 }
 
-window.Notification.requestPermission()
-  .then((permission) => {
-    if (permission !== "granted") return;
-  })
+const isBrowser = () => typeof window !== 'undefined';
+let worker: ServiceWorkerContainer
 
-const worker = navigator.serviceWorker
+if (isBrowser()) {
+  worker = navigator.serviceWorker
 
-if (window.Notification.permission) {
-  worker
-    .register('/workers/notification-sw.js')
-    .then(async worker => {
-      let subscription = await worker.pushManager.getSubscription()
-
-      if (!subscription) {
-        const publicKey = await fetch('/api/sub')
-          .then(res => res.text())
-
-        console.log(publicKey)
-
-        subscription = await worker.pushManager.subscribe({
-          applicationServerKey: publicKey,
-          userVisibleOnly: true
-        })
-      }
-
-      await fetch('/api/sub', {
-        method: 'POST',
-        body: JSON.stringify({ subscription })
-      })
+  window.Notification.requestPermission()
+    .then((permission) => {
+      if (permission !== "granted") return;
     })
+
+  if (window.Notification.permission) {
+    worker
+      .register('/workers/notification-sw.js')
+      .then(async worker => {
+        let subscription = await worker.pushManager.getSubscription()
+
+        if (!subscription) {
+          const publicKey = await fetch('/api/sub')
+            .then(res => res.text())
+
+          subscription = await worker.pushManager.subscribe({
+            applicationServerKey: publicKey,
+            userVisibleOnly: true
+          })
+        }
+
+        await fetch('/api/sub', {
+          method: 'POST',
+          body: JSON.stringify({ subscription })
+        })
+      })
+  }
 }
 
 export function NotificationList() {
   const [notifications, setNotifications] = useState<Notification[]>([])
 
   useEffect(() => {
-    if (worker) {
+    if (worker && isBrowser()) {
       worker.addEventListener('message', ({ data }) => {
         const notification: Notification = JSON.parse(data.msg)
 

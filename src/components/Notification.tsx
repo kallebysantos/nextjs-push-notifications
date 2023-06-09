@@ -1,6 +1,5 @@
-import { Notification } from '@/contexts/NotificationContext'
 import React from 'react'
-
+import { Notification } from './NotificationList'
 
 type NotificationProps = {
   value: Notification

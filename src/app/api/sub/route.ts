@@ -1,16 +1,15 @@
 import WebPush from 'web-push'
 
-// Should be stored as Env secrets
-const VAPIDKeys = {
-  publicKey: 'BPoHB2L2w5JRVL5ZCCKfdvqsN0l0htvXA6wrrLMOp0BG37tLBfQFxZ1iFCXJrCyYE6MMZzyqCSMgYxtGaITXgQU',
-  privateKey: 'ozzhzPBPy7QRjB9ti7_VbZSfoCucC3G5OVlKpR09QhM'
-}
 
-WebPush.setVapidDetails('http://localhost:3000', VAPIDKeys.publicKey, VAPIDKeys.privateKey)
+WebPush.setVapidDetails(
+  process.env.VERCEL_URL ?? '',
+  process.env.PUBLIC_NOTIFICATION_KEY ?? '',
+  process.env.PRIVATE_NOTIFICATION_KEY ?? ''
+)
 
 
 export async function GET() {
-  return new Response(VAPIDKeys.publicKey)
+  return new Response(process.env.PUBLIC_NOTIFICATION_KEY ?? '')
 }
 
 export type SubscribePayload = {
